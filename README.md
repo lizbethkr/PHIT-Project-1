@@ -1,4 +1,4 @@
-# PHIT-Project
+# PHIT-Project 1
 This project is for UCI's Public Health Informatics and Technology (PHIT) internship with [Wu Enviornmental Lab]([https://drwulab.net/]) at UCI.
 
 #### -- Project Status: [Active]
