@@ -90,7 +90,7 @@ ca_half = first_half(ca_stations)
 # use CA stations found to get data from stations from 2003 - 2023
 for year in range(2003, 2024):
     combined_data = []
-    for station in ca_half:
+    for station in ca_stations:
         # create file path
         file_path = os.path.join(raw_folder, f"{station}_{year}.psv")
         url = base_url.format(year=year, station=station)  # format for each station's psv file for each year
@@ -103,8 +103,10 @@ for year in range(2003, 2024):
         data = pd.read_csv(file_path, sep='|', low_memory=False)
 
         data = data[keep_columns]
-        data.fillna(0, inplace=True)
+        data = data.drop_duplicates()
 
+        data.fillna(-1, inplace=True)
+        
         # add station data to the specific year data
         combined_data.append(data)
 
