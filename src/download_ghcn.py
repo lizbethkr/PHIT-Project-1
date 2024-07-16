@@ -7,12 +7,16 @@ import time
 base_url = "https://www.ncei.noaa.gov/oa/global-historical-climatology-network/hourly/access/by-year/{year}/psv/GHCNh_{station}_{year}.psv"
 
 # preparing folder for the hourly data by year and station
-base_folder = "data/ghcn_hourly"
+base_folder = "data"
 raw_folder = os.path.join(base_folder, "ghcn_raw")
 processed_folder = os.path.join(base_folder, "ghcn_processed")
+external_folder = os.path.join('data/external', "external")
 
 if not os.path.exists(processed_folder):
     os.makedirs(processed_folder)
+
+if not os.path.exists(external_folder):
+    os.makedirs(external_folder)
 
 # read through GHCN station list to get CA stations
 all_stations = "https://www.ncei.noaa.gov/oa/global-historical-climatology-network/hourly/doc/ghcnh-station-list.txt"
@@ -44,9 +48,15 @@ for line in metadata_lines:
             'state': state,
             'name': name
         })
-
-# filtering for CA stations
+# filtering for CA stations 
 ca_stations = [station['station_id'] for station in station_metadata if station['state'] == 'CA']
+
+# save stations to a txt file
+stations_file = os.path.join('data', 'ca_stations.txt')
+
+with open(os.path.join(external_folder, "ca_stations.txt"), 'w') as f:
+    for station in ca_stations:
+        f.write(f"{station}\n")
 
 # how many CA stations found: 391 stations
 print(f"Found {len(ca_stations)} California stations.")
@@ -65,29 +75,26 @@ def downloading(url, f_path, retries=3):
             else:
                 print(f"Does not exist: {url}, status code: {response.status_code}")
                 return False
-        # for timeout errors - retries
         except requests.exceptions.RequestException as e:
             print(f"Attempt {attempt + 1} failed: {e}")
             time.sleep(5)
 
-
     print(f"Failed to download data from {url} after {retries} attempts")
     return False
-
-def first_half(lst):
-    length = len(lst)
-    middle = length // 2
-    first = lst[:middle]
-    return first
 
 # columns to keep
 keep_columns = ['Station_ID', 'Station_name', 'Year', 'Month', 'Day',
                 'Hour', 'Latitude', 'Longitude', 'temperature']
 
-# only grab first half of the stations for now
-ca_half = first_half(ca_stations)
-
 # use CA stations found to get data from stations from 2003 - 2023
+percentage_missing_data = []
+
+# Initialize counters for total entries and empty entries across all files
+total_entries_all = 0
+empty_entries_all = 0
+
+station_missing_temp = {}
+
 for year in range(2003, 2024):
     combined_data = []
     for station in ca_stations:
@@ -102,13 +109,19 @@ for year in range(2003, 2024):
         # read psv (pipe-separated values)
         data = pd.read_csv(file_path, sep='|', low_memory=False)
 
+        # some data cleaning - dropping rows, duplicates and indicating missing values
         data = data[keep_columns]
         data = data.drop_duplicates()
-
-        data.fillna(-1, inplace=True)
+        data.fillna(-999, inplace=True)
         
         # add station data to the specific year data
         combined_data.append(data)
+
+        if station not in station_missing_temp:
+            station_missing_temp[station] = {'total': 0, 'missing': 0}
+
+        station_missing_temp[station]['total'] += data.shape[0]
+        station_missing_temp[station]['missing'] += data[data['temperature'] == -999].shape[0]
 
         # comment below to keep raw files
         os.remove(file_path)
@@ -118,8 +131,41 @@ for year in range(2003, 2024):
         # combine all dataframes for the year
         combined_df = pd.concat(combined_data, ignore_index=True)
 
+        # calculate percentage of empty temperature values
+        total_entries = combined_df.shape[0]
+        empty_entries = combined_df[combined_df['temperature'] == -999].shape[0]
+        percentage_empty = (empty_entries / total_entries) * 100
+
+        percentage_missing_data.append({
+            'year': year,
+            'percentage_empty': percentage_empty
+        })
+
+        # update total and empty entries counters
+        total_entries_all += total_entries
+        empty_entries_all += empty_entries
+
         # save year df to csv file
         combined_df.to_csv(os.path.join(processed_folder, f"CA_stations_{year}.csv"), index=False)
         print(f"Processed all CA stations for year {year}")
+
+# calculate overall percentage of empty temperature values
+overall_percentage_empty = (empty_entries_all / total_entries_all) * 100
+
+# grab stations with more than 50% missing temp values
+stations_with_high_missing = [
+    station for station, counts in station_missing_temp.items()
+    if counts['total'] > 0 and (counts['missing'] / counts['total']) > 0.5
+]
+
+# Write the percentage of missing data to a text file
+with open(os.path.join(external_folder, "percentage_missing_data.txt"), 'w') as f:
+    for item in percentage_missing_data:
+        f.write(f"Year: {item['year']}, Percentage of missing temperature values: {item['percentage_empty']:.2f}%\n")
+    
+    f.write(f"\nOverall percentage of missing temperature values: {overall_percentage_empty:.2f}%\n")
+    f.write("\nStations with more than 50% missing temperature values:\n")
+    for station in stations_with_high_missing:
+        f.write(f"{station}\n")
 
 print("Complete.")
