@@ -8,6 +8,7 @@ __pycache__/
 
 # Ignored folders
 /data/ghcn_processed/
+src/check_size.py
 
 # Distribution / packaging
 .Python

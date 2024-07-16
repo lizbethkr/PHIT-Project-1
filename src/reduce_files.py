@@ -9,9 +9,9 @@ def read_california_stations(file_path):
     with open(file_path, 'r') as f:
         stations = [line.strip() for line in f.readlines()]
         half_len = len(stations) // 2
-        last_half = stations[half_len + 2:]
-        print(len(last_half)) # 194 stations
-    return last_half
+        quarter_piece = stations[half_len + (half_len//2):]
+        print(len(quarter_piece)) # 99 stations
+    return quarter_piece
 
 # Function to reduce each processed file based on California stations list
 def reduce_processed_files(folder, california_stations):
