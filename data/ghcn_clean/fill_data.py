@@ -23,4 +23,4 @@ def calculate_missing_values(dfs):
         percentage_missing_temp = (missing_temp / total_values) * 100
 
         print (f"Year: {year}")
-        print (f"Total missing temperature values: {missing_temp}")
+        print (f"Total missing temperature values: {percentage_missing_temp}")

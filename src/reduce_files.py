@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import numpy as np
 
 # Define your processed folder where the original processed files are stored
 processed_folder = "data/ghcn_reduced"
@@ -26,7 +27,9 @@ def reduce_processed_files(folder, california_stations):
                 # Filter dataframe based on California stations list
                 df_filtered = df[df['Station_ID'].isin(california_stations)]
 
-                
+                # replace -999 with NaN
+                df_filtered.replace(-999, np.nan, inplace=True)
+
                 reduced_filename = f"reduced_{filename}"
                 reduced_path = os.path.join(folder, reduced_filename)
                 
