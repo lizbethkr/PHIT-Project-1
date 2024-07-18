@@ -15,3 +15,12 @@ def combine_files_to_dfs(folder):
             except Exception as e:
                 print(f"Error processing file {filename}: {str(e)}")
     return dfs
+
+def calculate_missing_values(dfs):
+    for year, df in dfs.items():
+        missing_temp = df['temperature'].isnull().sum()
+        total_vlaues = df['temperature'].size
+        percentage_missing_temp = (missing_temp / total_values) * 100
+
+        print (f"Year: {year}")
+        print (f"Total missing temperature values: {missing_temp}")
