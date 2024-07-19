@@ -22,7 +22,7 @@ def reduce_processed_files(folder, california_stations):
             year = filename.split("_")[2].split(".")[0]
             
             try:
-                df = pd.read_csv(full_path)
+                df = pd.read_csv(full_path, na_values=-999)
                 
                 # Filter dataframe based on California stations list
                 df_filtered = df[df['Station_ID'].isin(california_stations)]
