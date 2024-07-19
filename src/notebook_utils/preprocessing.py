@@ -1,6 +1,9 @@
 import os
 import pandas as pd
 
+# Functions used for notebooks
+
+
 def combine_files_to_dfs(folder):
     dfs = []
     for filename in os.listdir(folder):

@@ -112,7 +112,6 @@ for year in range(2003, 2024):
         # some data cleaning - dropping rows, duplicates and indicating missing values
         data = data[keep_columns]
         data = data.drop_duplicates()
-        data.fillna(-999, inplace=True)
         
         # add station data to the specific year data
         combined_data.append(data)
@@ -121,7 +120,7 @@ for year in range(2003, 2024):
             station_missing_temp[station] = {'total': 0, 'missing': 0}
 
         station_missing_temp[station]['total'] += data.shape[0]
-        station_missing_temp[station]['missing'] += data[data['temperature'] == -999].shape[0]
+        station_missing_temp[station]['missing'] += data[pd.isna(data['temperature'])].shape[0]
 
         # comment below to keep raw files
         os.remove(file_path)
@@ -133,7 +132,7 @@ for year in range(2003, 2024):
 
         # calculate percentage of empty temperature values
         total_entries = combined_df.shape[0]
-        empty_entries = combined_df[combined_df['temperature'] == -999].shape[0]
+        empty_entries = combined_df[pd.isna(combined_df['temperature'])].shape[0]
         percentage_empty = (empty_entries / total_entries) * 100
 
         percentage_missing_data.append({
