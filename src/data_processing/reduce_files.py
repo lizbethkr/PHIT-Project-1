@@ -1,18 +1,13 @@
 import os
 import pandas as pd
-import numpy as np
+import sys
 
-# Define your processed folder where the original processed files are stored
-processed_folder = "data/ghcn_reduced"
+curr_dir = os.path.dirname('src\data_processing')
+proj_dir = os.path.dirname(curr_dir)
+src_path = os.path.join(proj_dir, 'src', 'notebook_utils')
+sys.path.append(src_path)
 
-# Function to read California stations from a text file
-def read_california_stations(file_path):
-    with open(file_path, 'r') as f:
-        stations = [line.strip() for line in f.readlines()]
-        half_len = len(stations) // 2
-        quarter_piece = stations[half_len + (half_len//2):]
-        print(len(quarter_piece)) # 99 stations
-    return quarter_piece
+from preprocessing import read_california_stations # type: ignore
 
 # Function to reduce each processed file based on California stations list
 def reduce_processed_files(folder, california_stations):
@@ -37,7 +32,6 @@ def reduce_processed_files(folder, california_stations):
             except Exception as e:
                 print(f"Error processing file {filename}: {str(e)}")
 
-california_stations_file = "data/external/ca_stations.txt"
-california_stations = read_california_stations(california_stations_file)
+california_stations = read_california_stations()
 
-reduce_processed_files(processed_folder, california_stations)
+reduce_processed_files('data/ghcn_reduced', california_stations)
