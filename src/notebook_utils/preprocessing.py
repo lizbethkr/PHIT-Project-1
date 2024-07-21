@@ -40,7 +40,7 @@ def create_full_df():
     ''' function to create a dataframe with all of the hours from 2003 to 2023. '''
     
     stations = read_california_stations()
-    date_range = pd.date_range(start='2003-01-01 00:00', end='2023-12-31 23:00', freq='H')
+    date_range = pd.date_range(start='2003-01-01 00:00', end='2023-12-31 23:00', freq='h')
 
     # dataframe for the date_range
     full_df = pd.DataFrame(date_range, columns=['datetime'])
@@ -93,3 +93,14 @@ def compare_dfs(ref_df, curr_df):
     updated_data.sort_values(by=['Station_ID', 'Year', 'Month', 'Day', 'Hour'], inplace=True)
     
     return updated_data
+
+def process_by_year(ref_df, curr_df):
+    ''' Create dataframe by using yearly chunks. Still outputs a dataframe with all 99 stations from 2003-2023.'''
+
+    years = ref_df['Year'].unique()
+
+    for year in years: 
+        ref_df= ref_df[ref_df['Year'] == year]
+        curr_df = compare_dfs(ref_df, curr_df)
+
+    return curr_df

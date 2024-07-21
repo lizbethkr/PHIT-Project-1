@@ -8,6 +8,7 @@ __pycache__/
 
 # Ignored folders
 /data/ghcn_processed/
+/notebooks/*.csv
 
 # Distribution / packaging
 .Python
