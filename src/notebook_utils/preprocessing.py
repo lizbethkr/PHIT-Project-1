@@ -1,8 +1,7 @@
 import os
 import pandas as pd
 import numpy as np
-import requests
-import sys
+from scipy.interpolate import CubicSpline
 
 # Functions used for data_preprocessing notebook
 
@@ -104,3 +103,44 @@ def process_by_year(ref_df, curr_df):
         curr_df = compare_dfs(ref_df, curr_df)
 
     return curr_df
+
+def cubic_spline_interpolate(data, gap_hours=24):
+    '''Cubic spline interpolation on the data where there is more than a day's worth of missing temperature values.'''
+
+    data = data.copy()
+    data['temperature'] = pd.to_numeric(data['temperature'], errors='coerce')
+    
+    data['Datetime'] = pd.to_datetime(data[['Year', 'Month', 'Day', 'Hour']])
+    data.set_index('Datetime', inplace=True)
+    data.sort_index(inplace=True)
+    
+    hourly_data = data['temperature'].resample('h').mean()
+    
+    is_missing = hourly_data.isna()
+    
+    missing_indices = np.where(is_missing)[0]
+    
+    gaps = np.split(missing_indices, np.where(np.diff(missing_indices) != 1)[0] + 1)
+    
+    interpolated_data = hourly_data.copy()
+    
+    for gap in gaps:
+        if len(gap) > gap_hours:
+            start_index = max(gap[0] - 1, 0)
+            end_index = min(gap[-1] + 1, len(hourly_data) - 1)
+            
+            x = np.arange(start_index, end_index + 1)
+            y = hourly_data.iloc[start_index:end_index + 1].values
+            mask = ~np.isnan(y)
+            
+            if np.sum(mask) > 1:  
+                # Apply cubic spline interpolation
+                cs = CubicSpline(x[mask], y[mask])
+                interpolated_data.iloc[gap] = cs(gap)
+    
+    data['temperature'] = data['temperature'].combine_first(interpolated_data)
+    data['temperature'] = data['temperature'].round(1)
+    data.reset_index(drop=True, inplace=True)
+    data.sort_values(by=['Station_ID', 'Year', 'Month', 'Day', 'Hour'], inplace=True)
+
+    return data
