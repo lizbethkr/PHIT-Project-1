@@ -137,7 +137,7 @@ def cubic_spline_interpolate(data, gap_hours=24):
                 # Apply cubic spline interpolation
                 cs = CubicSpline(x[mask], y[mask])
                 interpolated_data.iloc[gap] = cs(gap)
-    
+
     data['temperature'] = data['temperature'].combine_first(interpolated_data)
     data['temperature'] = data['temperature'].round(1)
     data.reset_index(drop=True, inplace=True)

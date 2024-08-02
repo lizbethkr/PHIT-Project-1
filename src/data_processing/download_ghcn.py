@@ -15,6 +15,9 @@ external_folder = os.path.join('data/external', "external")
 if not os.path.exists(processed_folder):
     os.makedirs(processed_folder)
 
+if not os.path.exists(raw_folder):
+    os.makedirs(raw_folder)
+
 if not os.path.exists(external_folder):
     os.makedirs(external_folder)
 
@@ -95,7 +98,7 @@ empty_entries_all = 0
 
 station_missing_temp = {}
 
-for year in range(2003, 2024):
+for year in range(2023, 2024):
     combined_data = []
     for station in ca_stations:
         # create file path
