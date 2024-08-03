@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
+import os
 
 # Source code for exploratory_data_analysis notebook in notebooks folder
 def assign_season(month):
@@ -44,19 +45,48 @@ def get_representative_stations(df):
     }
     return rep_stations
 
-def plot_diurnal_cycle(station_id, station_data):
+def plot_diurnal_cycle(station_id, station_data, output_dir):
     '''Plot diurnal cycle and save plot specified station.'''
 
-    plt.figure(figsize=(14, 7))
-    sns.lineplot(data=station_data, x='Hour', y='Temperature', hue='Season', marker='o')
-    plt.title(f'Hourly Temperature Patterns for Station {station_id}')
-    plt.xlabel('Hour of the Day')
-    plt.ylabel('Temperature (°C)')
-    plt.legend(title= 'Season')
-    plt.xticks(range(0,24))
-    plt.grid(True)
+    fig, axs = plt.subplots(2, 1, figsize=(14, 14))
+    
+    # Plot diurnal patterns across different seasons
+    sns.lineplot(ax=axs[0], data=station_data, x='Hour', y='Temperature', hue='Season', marker='o')
+    axs[0].set_title(f'Hourly Temperature Patterns for Station {station_id} by Season')
+    axs[0].set_xlabel('Hour of the Day')
+    axs[0].set_ylabel('Temperature (°C)')
+    axs[0].legend(title='Season')
+    axs[0].set_xticks(range(0, 24))
+    axs[0].grid(True)
+
+    # Plot diurnal patterns across different years
+    sns.lineplot(ax=axs[1], data=station_data, x='Hour', y='Temperature', hue='Year', palette='tab20', marker='o', errorbar=None)
+    axs[1].set_title(f'Hourly Temperature Patterns for Station {station_id} by Year')
+    axs[1].set_xlabel('Hour of the Day')
+    axs[1].set_ylabel('Temperature (°C)')
+    axs[1].legend(title='Year', loc='upper right', bbox_to_anchor=(1, 1))
+    axs[1].set_xticks(range(0, 24))
+    axs[1].grid(True)
+
     plt.tight_layout()
 
-    plt.savefig(f'{station_id}_diurnal_cycle.png')
+    os.makedirs(output_dir, exist_ok=True)
+
+    file_path = os.path.join(output_dir, f'{station_id}_diurnal_cycle.png')
+    plt.savefig(file_path)
     plt.close()
+
+def get_diurnal_info(station_data):
+    diurnal_data = station_data.groupby(['Year','Season','Hour']).agg({'Temperature':'mean'}).reset_index()
+    return diurnal_data
+
+def save_dirunal_plots(df, output_dir):
+    station_ids = df['Station_ID'].unique()
+    for station_id in station_ids:
+        station_data = df[df['Station_ID'] == station_id]
+        diurnal_data = get_diurnal_info(station_data)
+        plot_diurnal_cycle(station_id, diurnal_data, output_dir)
+        print(f'Plotted and saved dirunal cycle patterns for station: {station_id}')
+
+    print('Plotted and saved diurnal cycle plots for all stations.')
 
