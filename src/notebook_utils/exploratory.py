@@ -23,7 +23,10 @@ def get_representative_stations(df):
     '''Calculate statistics for each station, identify representative stations,
     and return a dictionary of stations that should be presented.'''
 
-    station_stats = df.groupby('Station_ID').agg(
+    # exclude 2023, to avoid any skewness in results
+    df_filtered = df[df['Year'] < 2023]
+
+    station_stats = df_filtered.groupby('Station_ID').agg(
         Mean_Temp = ('Temperature', 'mean'),
         Max_Temp = ('Temperature', 'mean'),
         Min_Temp = ('Temperature', 'min'),
@@ -39,11 +42,11 @@ def get_representative_stations(df):
     # dictionary to return
 
     rep_stations = {
-        'Highest_Mean_Temp': highest_mean,
-        'Lowest_Mean_Temp': lowest_mean,
-        'Highest_Temp': max_temp,
-        'Lowest_Temp': min_temp,
-        'Largest_Range': largest_range
+        'Highest Mean Temperature': highest_mean,
+        'Lowest Mean Temperature': lowest_mean,
+        'Highest Temperature': max_temp,
+        'Lowest Temperature': min_temp,
+        'Largest Range': largest_range
     }
     return rep_stations
 
@@ -154,3 +157,31 @@ def add_county_city(df, station_data_df):
     df['City'] = df['City'].fillna('Unknown')
     
     return df
+
+def plot_representative(df,station_id, station_name):
+    # exclude 2023 
+    station_data = df[(df['Station_ID'] == station_id) & (df['Year'] < 2023)].copy()
+    station_data.loc[:, 'Season'] = pd.cut(station_data['Month'], bins=[0, 3, 6, 9, 12], labels=['Winter', 'Spring', 'Summer', 'Fall'])
+    
+    fig, axs = plt.subplots(2, 1, figsize=(14, 14))
+
+    # Plot diurnal patterns across different seasons
+    sns.lineplot(ax=axs[0], data=station_data, x='Hour', y='Temperature', hue='Season', marker='o')
+    axs[0].set_title(f'Hourly Temperature Patterns for the {station_name}: {station_id} by Season')
+    axs[0].set_xlabel('Hour of the Day')
+    axs[0].set_ylabel('Temperature (°C)')
+    axs[0].legend(title='Season')
+    axs[0].set_xticks(range(0, 24))
+    axs[0].grid(True)
+
+    # Plot diurnal patterns across different years
+    sns.lineplot(ax=axs[1], data=station_data, x='Hour', y='Temperature', hue='Year', palette='tab20', marker='o', errorbar=None)
+    axs[1].set_title(f'Hourly Temperature Patterns for the {station_name}: {station_id} by Year')
+    axs[1].set_xlabel('Hour of the Day')
+    axs[1].set_ylabel('Temperature (°C)')
+    axs[1].legend(title='Year', loc='upper right', bbox_to_anchor=(1, 1))
+    axs[1].set_xticks(range(0, 24))
+    axs[1].grid(True)
+
+    plt.tight_layout()
+    plt.show() 
