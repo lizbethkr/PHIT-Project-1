@@ -1,0 +1,105 @@
+Year: 2003
+Mean: Calculated = 15.310636035392612, Manual = 15.28598043266389, Difference = 0.02465560272872125
+Median: Calculated = 14.4, Manual = 14.0, Difference = 0.40000000000000036
+Standard Deviation: Calculated = 7.823556850493177, Manual = 7.838815913062157, Difference = -0.015259062568979687
+--------------------------------------------------
+Year: 2004
+Mean: Calculated = 15.045914319601843, Manual = 15.036526944977627, Difference = 0.00938737462421635
+Median: Calculated = 14.0, Manual = 14.0, Difference = 0.0
+Standard Deviation: Calculated = 7.815659189590836, Manual = 7.823740868453215, Difference = -0.008081678862379427
+--------------------------------------------------
+Year: 2005
+Mean: Calculated = 15.093832330707958, Manual = 15.209250475452095, Difference = -0.1154181447441367
+Median: Calculated = 14.4, Manual = 14.4, Difference = 0.0
+Standard Deviation: Calculated = 7.681167720832501, Manual = 7.803880431712539, Difference = -0.12271271088003832
+--------------------------------------------------
+Year: 2006
+Mean: Calculated = 16.060981597440726, Manual = 16.043699406079124, Difference = 0.017282191361601917
+Median: Calculated = 15.0, Manual = 15.0, Difference = 0.0
+Standard Deviation: Calculated = 9.187276131683712, Manual = 9.18211642180501, Difference = 0.005159709878702401
+--------------------------------------------------
+Year: 2007
+Mean: Calculated = 15.745740708721907, Manual = 15.747953611851596, Difference = -0.0022129031296884705
+Median: Calculated = 15.0, Manual = 15.0, Difference = 0.0
+Standard Deviation: Calculated = 9.0769767719334, Manual = 9.079651815759695, Difference = -0.0026750438262954646
+--------------------------------------------------
+Year: 2008
+Mean: Calculated = 15.672654409534047, Manual = 15.669008719124625, Difference = 0.0036456904094226417
+Median: Calculated = 14.6, Manual = 14.6, Difference = 0.0
+Standard Deviation: Calculated = 9.042896761521057, Manual = 9.043277858794804, Difference = -0.000381097273747244
+--------------------------------------------------
+Year: 2009
+Mean: Calculated = 15.3056887822611, Manual = 15.303008107170728, Difference = 0.0026806750903727306
+Median: Calculated = 14.4, Manual = 14.4, Difference = 0.0
+Standard Deviation: Calculated = 8.658332437994284, Manual = 8.653077184981298, Difference = 0.0052552530129865715
+--------------------------------------------------
+Year: 2010
+Mean: Calculated = 14.833098331864038, Manual = 14.828046303644363, Difference = 0.0050520282196746535
+Median: Calculated = 13.9, Manual = 13.9, Difference = 0.0
+Standard Deviation: Calculated = 8.236370986629689, Manual = 8.235502104350104, Difference = 0.000868882279585037
+--------------------------------------------------
+Year: 2011
+Mean: Calculated = 14.581306349608754, Manual = 14.576016402594012, Difference = 0.005289947014741614
+Median: Calculated = 13.9, Manual = 13.9, Difference = 0.0
+Standard Deviation: Calculated = 8.407257817879978, Manual = 8.41174681985894, Difference = -0.004489001978962293
+--------------------------------------------------
+Year: 2012
+Mean: Calculated = 15.498170768432852, Manual = 15.49404879119266, Difference = 0.004121977240192365
+Median: Calculated = 14.4, Manual = 14.4, Difference = 0.0
+Standard Deviation: Calculated = 8.54807878516565, Manual = 8.551758498161728, Difference = -0.003679712996078166
+--------------------------------------------------
+Year: 2013
+Mean: Calculated = 15.045879988778855, Manual = 15.040832827375837, Difference = 0.005047161403018308
+Median: Calculated = 14.4, Manual = 14.4, Difference = 0.0
+Standard Deviation: Calculated = 9.319434494173835, Manual = 9.316695419059695, Difference = 0.002739075114140732
+--------------------------------------------------
+Year: 2014
+Mean: Calculated = 16.759981433116128, Manual = 16.75478805688033, Difference = 0.005193376235798297
+Median: Calculated = 16.1, Manual = 16.1, Difference = 0.0
+Standard Deviation: Calculated = 8.99894426416875, Manual = 8.993338599390741, Difference = 0.005605664778009611
+--------------------------------------------------
+Year: 2015
+Mean: Calculated = 16.562015400149562, Manual = 16.54562365015644, Difference = 0.016391749993122318
+Median: Calculated = 16.0, Manual = 16.0, Difference = 0.0
+Standard Deviation: Calculated = 8.510891499669027, Manual = 8.508910305439846, Difference = 0.0019811942291809714
+--------------------------------------------------
+Year: 2016
+Mean: Calculated = 16.22939358144387, Manual = 16.222962633579584, Difference = 0.006430947864284775
+Median: Calculated = 15.0, Manual = 15.0, Difference = 0.0
+Standard Deviation: Calculated = 8.298519402790161, Manual = 8.297536356975373, Difference = 0.0009830458147881416
+--------------------------------------------------
+Year: 2017
+Mean: Calculated = 16.343802772946418, Manual = 16.33575251069573, Difference = 0.008050262250687723
+Median: Calculated = 15.3, Manual = 15.3, Difference = 0.0
+Standard Deviation: Calculated = 8.68068836846883, Manual = 8.680629178328415, Difference = 5.919014041566584e-05
+--------------------------------------------------
+Year: 2018
+Mean: Calculated = 16.076558365588838, Manual = 16.069322281473053, Difference = 0.007236084115785246
+Median: Calculated = 15.0, Manual = 15.0, Difference = 0.0
+Standard Deviation: Calculated = 8.45282987871459, Manual = 8.45276273762129, Difference = 6.714109330019369e-05
+--------------------------------------------------
+Year: 2019
+Mean: Calculated = 15.563527429559477, Manual = 15.55776348251746, Difference = 0.005763947042016326
+Median: Calculated = 14.4, Manual = 14.4, Difference = 0.0
+Standard Deviation: Calculated = 8.419629832108825, Manual = 8.418391373678865, Difference = 0.0012384584299596213
+--------------------------------------------------
+Year: 2020
+Mean: Calculated = 16.20607798956154, Manual = 16.200682402408145, Difference = 0.005395587153394388
+Median: Calculated = 15.1, Manual = 15.1, Difference = 0.0
+Standard Deviation: Calculated = 8.804687421961683, Manual = 8.803802844046091, Difference = 0.0008845779155919331
+--------------------------------------------------
+Year: 2021
+Mean: Calculated = 15.813679690449224, Manual = 15.807598324334142, Difference = 0.006081366115081366
+Median: Calculated = 14.6, Manual = 14.6, Difference = 0.0
+Standard Deviation: Calculated = 8.6630551852938, Manual = 8.661708292064302, Difference = 0.0013468932294973257
+--------------------------------------------------
+Year: 2022
+Mean: Calculated = 15.372530569191698, Manual = 15.370640790234281, Difference = 0.001889778957416155
+Median: Calculated = 15.0, Manual = 15.0, Difference = 0.0
+Standard Deviation: Calculated = 8.443931509575517, Manual = 8.444199014115751, Difference = -0.00026750454023449777
+--------------------------------------------------
+Year: 2023
+Mean: Calculated = 11.16043931620068, Manual = 11.159523809523812, Difference = 0.0009155066768684605
+Median: Calculated = 11.1, Manual = 11.1, Difference = 0.0
+Standard Deviation: Calculated = 6.496727357109789, Manual = 6.4969359487293294, Difference = -0.00020859161954067673
+--------------------------------------------------
