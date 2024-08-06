@@ -39,7 +39,7 @@ def create_full_df():
     ''' function to create a dataframe with all of the hours from 2003 to 2023. '''
     
     stations = read_california_stations()
-    date_range = pd.date_range(start='2003-01-01 00:00', end='2023-12-31 23:00', freq='h')
+    date_range = pd.date_range(start='2003-01-01 00:00', end='2023-05-31 23:00', freq='h')
 
     # dataframe for the date_range
     full_df = pd.DataFrame(date_range, columns=['datetime'])
@@ -63,7 +63,8 @@ def create_full_df():
 
 def compare_dfs(ref_df, curr_df):
     '''Compare reference dataframe with the uncleaned dataframe to ensure all 
-    rows are present for each hour. Update current df with the missing rows.'''
+    rows are present for each hour. Update current df with the missing rows.
+    This function is not used as it was not correctly populating missing rows.'''
 
     curr_df_index = curr_df.set_index(['Station_ID', 'Year', 'Month', 'Day', 'Hour'])
     ref_df_index = ref_df.set_index(['Station_ID', 'Year', 'Month', 'Day', 'Hour'])
@@ -94,7 +95,8 @@ def compare_dfs(ref_df, curr_df):
     return updated_data
 
 def process_by_year(ref_df, curr_df):
-    ''' Create dataframe by using yearly chunks. Still outputs a dataframe with all 99 stations from 2003-2023.'''
+    ''' Create dataframe by using yearly chunks. Still outputs a dataframe with all 99 stations from 2003-2023.
+    This function is not used as it does not correctly populate rows.'''
 
     years = ref_df['Year'].unique()
 
@@ -125,7 +127,7 @@ def cubic_spline_interpolate(data, gap_hours=24):
     interpolated_data = hourly_data.copy()
     
     for gap in gaps:
-        if len(gap) > gap_hours:
+        if len(gap) >= gap_hours:
             start_index = max(gap[0] - 1, 0)
             end_index = min(gap[-1] + 1, len(hourly_data) - 1)
             
@@ -144,6 +146,75 @@ def cubic_spline_interpolate(data, gap_hours=24):
     data.sort_values(by=['Station_ID', 'Year', 'Month', 'Day', 'Hour'], inplace=True)
 
     return data
+
+def check_station_rows(df):
+    ''' Ensure each station has the expected number of rows for each year.'''
+
+    year_hours = 8760
+    leap_year_hours = 8784
+
+    def is_leap(year):
+        return (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0)
+    
+    row_count = df.groupby(['Station_ID', 'Year']).size().reset_index(name='Row_Count')
+
+    def expected_rows(year):
+        if year == 2023:
+            return 3924
+        elif is_leap(year):
+            return leap_year_hours
+        else:
+            return year_hours
+        
+    row_count['Expected_Row_Count'] = row_count['Year'].apply(expected_rows)
+    
+    # Identify discrepancies
+    discrepancies = row_count[row_count['Row_Count'] != row_count['Expected_Row_Count']]
+    
+    return discrepancies
+
+
+def find_missing_rows(complete_df, curr_df):
+    '''Find rows present in the complete DataFrame but missing from the current DataFrame.'''
+    # Merge to find missing rows
+    merged = complete_df.merge(curr_df, on=['Station_ID', 'Year', 'Month', 'Day', 'Hour'], how='left', indicator=True)
+    missing_rows = merged[merged['_merge'] == 'left_only'].drop('_merge', axis=1)
+    
+    return missing_rows
+
+
+def add_missing_rows(curr_df, missing_rows):
+    '''Add missing rows to the current DataFrame.'''
+    updated_df = pd.concat([curr_df, missing_rows], ignore_index=True)
+    updated_df.sort_values(by=['Station_ID', 'Year', 'Month', 'Day', 'Hour'], inplace=True)
+    
+    # fill missing Station_name, Latitude, and Longitude
+    metadata = curr_df[['Station_ID', 'Station_name', 'Latitude', 'Longitude']].drop_duplicates().set_index('Station_ID')
+    updated_df['Station_name'] = updated_df['Station_name'].fillna(updated_df['Station_ID'].map(metadata['Station_name']))
+    updated_df['Latitude'] = updated_df['Latitude'].fillna(updated_df['Station_ID'].map(metadata['Latitude']))
+    updated_df['Longitude'] = updated_df['Longitude'].fillna(updated_df['Station_ID'].map(metadata['Longitude']))
+    
+    # keep certain columns
+    columns_to_keep = ['Station_ID', 'Station_name', 'Year', 'Month', 'Day', 'Hour', 'Latitude', 'Longitude', 'temperature']
+    updated_df_cleaned = updated_df[columns_to_keep]
+
+    return updated_df_cleaned
+
+
+def fill_gaps(data):
+    ''' Using forward/backward filll, fill missing gaps.'''
+    
+    def within_station(station):
+        return station.ffill().bfill()
+    
+    filled_df = data.groupby('Station_ID', group_keys=False).apply(lambda station: within_station(station[['temperature']]))
+
+    data['temperature'] = filled_df['temperature']
+    data['temperature'] = data['temperature'].round(1)
+    data.sort_values(by=['Station_ID', 'Year', 'Month', 'Day', 'Hour'], inplace=True)
+
+    return data
+
 
 # Filling short gaps in temperature
 def fill_if_sandwiched(series):

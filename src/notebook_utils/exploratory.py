@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
+from geopy.geocoders import Nominatim
+from geopy.exc import GeocoderTimedOut, GeocoderServiceError
 import os
 
 # Source code for exploratory_data_analysis notebook in notebooks folder
@@ -45,14 +47,14 @@ def get_representative_stations(df):
     }
     return rep_stations
 
-def plot_diurnal_cycle(station_id, station_data, output_dir):
+def plot_diurnal_cycle(group_id, group_data, output_dir, group_type):
     '''Plot diurnal cycle and save plot specified station.'''
 
     fig, axs = plt.subplots(2, 1, figsize=(14, 14))
     
     # Plot diurnal patterns across different seasons
-    sns.lineplot(ax=axs[0], data=station_data, x='Hour', y='Temperature', hue='Season', marker='o')
-    axs[0].set_title(f'Hourly Temperature Patterns for Station {station_id} by Season')
+    sns.lineplot(ax=axs[0], data=group_data, x='Hour', y='Temperature', hue='Season', marker='o')
+    axs[0].set_title(f'Hourly Temperature Patterns for {group_type} {group_id} by Season')
     axs[0].set_xlabel('Hour of the Day')
     axs[0].set_ylabel('Temperature (°C)')
     axs[0].legend(title='Season')
@@ -60,8 +62,8 @@ def plot_diurnal_cycle(station_id, station_data, output_dir):
     axs[0].grid(True)
 
     # Plot diurnal patterns across different years
-    sns.lineplot(ax=axs[1], data=station_data, x='Hour', y='Temperature', hue='Year', palette='tab20', marker='o', errorbar=None)
-    axs[1].set_title(f'Hourly Temperature Patterns for Station {station_id} by Year')
+    sns.lineplot(ax=axs[1], data=group_data, x='Hour', y='Temperature', hue='Year', palette='tab20', marker='o', errorbar=None)
+    axs[1].set_title(f'Hourly Temperature Patterns for {group_type} {group_id} by Year')
     axs[1].set_xlabel('Hour of the Day')
     axs[1].set_ylabel('Temperature (°C)')
     axs[1].legend(title='Year', loc='upper right', bbox_to_anchor=(1, 1))
@@ -69,24 +71,86 @@ def plot_diurnal_cycle(station_id, station_data, output_dir):
     axs[1].grid(True)
 
     plt.tight_layout()
-
     os.makedirs(output_dir, exist_ok=True)
-
-    file_path = os.path.join(output_dir, f'{station_id}_diurnal_cycle.png')
+    file_path = os.path.join(output_dir, f'{group_id}_diurnal_cycle.png')
     plt.savefig(file_path)
     plt.close()
 
-def get_diurnal_info(station_data):
-    diurnal_data = station_data.groupby(['Year','Season','Hour']).agg({'Temperature':'mean'}).reset_index()
+def get_diurnal_info(group_data):
+    diurnal_data = group_data.groupby(['Year','Season','Hour']).agg({'Temperature':'mean'}).reset_index()
     return diurnal_data
 
-def save_dirunal_plots(df, output_dir):
-    station_ids = df['Station_ID'].unique()
-    for station_id in station_ids:
-        station_data = df[df['Station_ID'] == station_id]
-        diurnal_data = get_diurnal_info(station_data)
-        plot_diurnal_cycle(station_id, diurnal_data, output_dir)
-        print(f'Plotted and saved dirunal cycle patterns for station: {station_id}')
+def save_diurnal_plots(df, output_dir, group_col, group_type):
+    group_ids = df[group_col].unique()
+    for group_id in group_ids:
+        group_data = df[df[group_col] == group_id]
+        diurnal_data = get_diurnal_info(group_data)
+        plot_diurnal_cycle(group_id, diurnal_data, output_dir, group_type)
+        print(f'Plotted and saved dirunal cycle patterns for {group_type}: {group_id}')
 
     print('Plotted and saved diurnal cycle plots for all stations.')
 
+def get_county(latitude, longitude, geolocator):
+    ''' Use geolocator to find the county name using latitude and longitude.'''
+
+    try:
+        location = geolocator.reverse((latitude, longitude), exactly_one=True, timeout=10)
+        if location:
+            address = location.raw['address']
+            return address.get('county', '')
+        
+    except (GeocoderTimedOut, GeocoderServiceError) as e:
+        print(f'Error: {e}')
+
+    return 'Unknown'
+
+def get_city(latitude,longitude, geolocator):
+    ''' Use geolocator to find the city name using latitude and longitude.'''
+
+    try:
+        location = geolocator.reverse((latitude, longitude), exactly_one=True, timeout=10)
+        if location:
+            address = location.raw['address']
+            return address.get('city', '') or address.get('town', '')
+        
+    except (GeocoderTimedOut, GeocoderServiceError) as e:
+        print(f'Error: {e}')
+
+    return 'Unknown'
+
+def station_geo(df,geolocator):
+    '''Find county and city names for all stations.'''
+    
+    unique_stations = df[['Station_ID','Latitude', 'Longitude']].drop_duplicates()
+    station_county = {}
+    station_city = {}
+
+    for _,row in unique_stations.iterrows():
+        latitude, longitude = row['Latitude'], row['Longitude']
+        station_id = row['Station_ID']
+        
+        # get county and city for the station
+        county = get_county(latitude, longitude, geolocator)
+        city = get_city(latitude, longitude, geolocator)
+        
+        # save county and city name
+        station_county[station_id] = county
+        station_city[station_id] = city
+
+        print('County and city name saved.')
+
+    # create dataframes
+    station_info_df = pd.DataFrame({
+        'Station_ID': station_county.keys(),
+        'County': station_county.values(),
+        'City': station_city.values()
+    })
+
+    return station_info_df
+
+def add_county_city(df, station_data_df):
+    df = df.merge(station_data_df, on='Station_ID', how='left')
+    df['County'] = df['County'].fillna('Unknown')
+    df['City'] = df['City'].fillna('Unknown')
+    
+    return df
