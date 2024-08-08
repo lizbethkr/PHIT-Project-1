@@ -202,7 +202,7 @@ def add_missing_rows(curr_df, missing_rows):
 
 
 def fill_gaps(data):
-    ''' Using forward/backward filll, fill missing gaps.'''
+    ''' Using forward/backward fill, fill missing gaps.'''
     
     def within_station(station):
         return station.ffill().bfill()

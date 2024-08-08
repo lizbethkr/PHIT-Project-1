@@ -7,9 +7,9 @@ import time
 base_url = "https://www.ncei.noaa.gov/oa/global-historical-climatology-network/hourly/access/by-year/{year}/psv/GHCNh_{station}_{year}.psv"
 
 # preparing folder for the hourly data by year and station
-base_folder = "data"
+base_folder = "data/raw"
 raw_folder = os.path.join(base_folder, "ghcn_raw")
-processed_folder = os.path.join(base_folder, "ghcn_processed")
+processed_folder = os.path.join(base_folder, "ghcn_csv")
 external_folder = os.path.join('data/external', "external")
 
 if not os.path.exists(processed_folder):

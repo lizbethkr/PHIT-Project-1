@@ -13,7 +13,7 @@ def verify_filled_values(file_path):
         print(nan_rows)
 
 def main():
-    directory = '../data/ghcn_reduced'  # Adjust this path as necessary
+    directory = '../data/processed/ghcn_reduced'  # Adjust this path as necessary
     print(f"Checking directory: {directory}")
     
     if not os.path.exists(directory):

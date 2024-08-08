@@ -11,9 +11,9 @@ from preprocessing import read_california_stations # type: ignore
 
 # Function to reduce each processed file based on California stations list
 def reduce_processed_files(folder, california_stations):
-    for filename in os.listdir("data/ghcn_processed"):
+    for filename in os.listdir("data/raw/ghcn_csv"):
         if filename.startswith("CA_stations_") and filename.endswith(".csv"):
-            full_path = os.path.join("data/ghcn_processed", filename)
+            full_path = os.path.join("data/raw/ghcn_csv", filename)
             year = filename.split("_")[2].split(".")[0]
             
             try:
@@ -34,4 +34,4 @@ def reduce_processed_files(folder, california_stations):
 
 california_stations = read_california_stations()
 
-reduce_processed_files('data/ghcn_reduced', california_stations)
+reduce_processed_files('data/processed/ghcn_reduced', california_stations)

@@ -2,7 +2,7 @@ import os
 
 # Run this code to check the size of the files within ghcn_reduced
 
-directory = 'data/ghcn_clean'
+directory = 'data/processed/ghcn_clean'
 
 csv_files = [f for f in os.listdir(directory) if f.endswith('.csv')]
 
