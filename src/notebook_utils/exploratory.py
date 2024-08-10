@@ -18,7 +18,8 @@ def assign_season(month):
         return 'Summer'
     elif month in [9,10,11]:
         return 'Fall'
-    
+
+
 def get_representative_stations(df):
     '''Calculate statistics for each station, identify representative stations,
     and return a dictionary of stations that should be presented.'''
@@ -50,6 +51,7 @@ def get_representative_stations(df):
     }
     return rep_stations
 
+
 def plot_diurnal_cycle(group_id, group_data, output_dir, group_type):
     '''Plot diurnal cycle and save plot specified station.'''
 
@@ -79,9 +81,11 @@ def plot_diurnal_cycle(group_id, group_data, output_dir, group_type):
     plt.savefig(file_path)
     plt.close()
 
+
 def get_diurnal_info(group_data):
     diurnal_data = group_data.groupby(['Year','Season','Hour']).agg({'Temperature':'mean'}).reset_index()
     return diurnal_data
+
 
 def save_diurnal_plots(df, output_dir, group_col, group_type):
     group_ids = df[group_col].unique()
@@ -92,6 +96,7 @@ def save_diurnal_plots(df, output_dir, group_col, group_type):
         print(f'Plotted and saved dirunal cycle patterns for {group_type}: {group_id}')
 
     print('Plotted and saved diurnal cycle plots for all stations.')
+
 
 def get_county(latitude, longitude, geolocator):
     ''' Use geolocator to find the county name using latitude and longitude.'''
@@ -107,6 +112,7 @@ def get_county(latitude, longitude, geolocator):
 
     return 'Unknown'
 
+
 def get_city(latitude,longitude, geolocator):
     ''' Use geolocator to find the city name using latitude and longitude.'''
 
@@ -120,6 +126,7 @@ def get_city(latitude,longitude, geolocator):
         print(f'Error: {e}')
 
     return 'Unknown'
+
 
 def station_geo(df,geolocator):
     '''Find county and city names for all stations.'''
@@ -151,12 +158,14 @@ def station_geo(df,geolocator):
 
     return station_info_df
 
+
 def add_county_city(df, station_data_df):
     df = df.merge(station_data_df, on='Station_ID', how='left')
     df['County'] = df['County'].fillna('Unknown')
     df['City'] = df['City'].fillna('Unknown')
     
     return df
+
 
 def plot_representative(df,station_id, station_name):
     # exclude 2023 
