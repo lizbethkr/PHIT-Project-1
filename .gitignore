@@ -10,6 +10,7 @@ __pycache__/
 /data/raw/ghcn_csv/
 /notebooks/*.csv
 /notebooks/*.txt
+/data/processed/ghcn_full/
 
 # Distribution / packaging
 .Python

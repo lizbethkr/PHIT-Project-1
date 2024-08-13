@@ -6,7 +6,7 @@ from scipy.interpolate import CubicSpline
 # Functions used for data_preprocessing notebook
 
 # Function to read California stations from a text file
-def read_california_stations():
+def read_qrt_stations():
     curr_dir = os.path.dirname(os.path.abspath(__file__))
     filepath = os.path.join(curr_dir, '..', '..', 'data', 'external', 'ca_stations.txt')
     
@@ -17,6 +17,14 @@ def read_california_stations():
         print(len(quarter_piece)) # 99 stations
     return quarter_piece
 
+def read_ca_stations():
+    curr_dir = os.path.dirname(os.path.abspath(__file__))
+    filepath = os.path.join(curr_dir, '..', '..', 'data', 'external', 'ca_stations.txt')
+    
+    with open(filepath, 'r') as f:
+        stations = [line.strip() for line in f.readlines()]
+        print(len(stations)) # 99 stations
+    return stations 
 
 def combine_files_to_dfs(folder):
     ''' combines individual csv files into their own dataframes based on year.
@@ -40,7 +48,7 @@ def combine_files_to_dfs(folder):
 def create_full_df():
     ''' function to create a dataframe with all of the hours from 2003 to 2023. '''
     
-    stations = read_california_stations()
+    stations = read_ca_stations()
     date_range = pd.date_range(start='2003-01-01 00:00', end='2023-05-31 23:00', freq='h')
 
     # dataframe for the date_range
