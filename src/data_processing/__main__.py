@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import sys
+import os
 
 curr_dir = os.path.dirname('src\data_processing')
 proj_dir = os.path.dirname(curr_dir)
@@ -41,13 +42,17 @@ def full_processed_files(folder, california_stations):
             
             try:
                 df = pd.read_csv(full_path, na_values=-999)
+                
+                if not os.path.exists(folder):
+                    os.makedirs(folder)
 
-                reduced_filename = f"full_{filename}"
-                reduced_path = os.path.join(folder, reduced_filename)
+                full_filename = f"full_{filename}"
+                full_path = os.path.join(folder, full_filename)
+
                 
-                df.to_csv(reduced_path, index=False)
+                df.to_csv(full_path, index=False)
                 
-                print(f"Full file saved: {reduced_filename}")
+                print(f"Full file saved: {full_filename}")
             
             except Exception as e:
                 print(f"Error processing file {filename}: {str(e)}")
@@ -58,7 +63,7 @@ def get_reduced_ver():
 
 def get_full_ver():
     california_stations = read_ca_stations()
-    reduce_processed_files('data/processed/ghcn_full', california_stations)
+    full_processed_files('data/processed/ghcn_full', california_stations)
 
 if __name__ == '__main__':
     get_full_ver()

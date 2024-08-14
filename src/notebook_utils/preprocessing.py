@@ -226,3 +226,15 @@ def fill_nan_sandwiched(input_file, output_file, txt_output_file):
     
     print(f"Filled data saved to: {output_file}")
     print(f"Changes log saved to: {txt_output_file}")
+
+def get_reduced_df():
+    # create a combined dataframe for all reduced csv files
+    dfs = combine_files_to_dfs("../data/processed/ghcn_reduced")
+    CA_stations = pd.concat(dfs, ignore_index=True) # type: ignore
+    return CA_stations
+
+def get_full_df():
+    # create a combined dataframe for all reduced csv files
+    dfs = combine_files_to_dfs("../data/processed/ghcn_full")
+    CA_stations = pd.concat(dfs, ignore_index=True) # type: ignore
+    return CA_stations
