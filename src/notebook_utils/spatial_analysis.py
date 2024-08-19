@@ -1,13 +1,6 @@
-from pykrige.ok import OrdinaryKriging
+import streamlit as st
 import plotly.express as px
-import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
-import geopandas as gpd
-import matplotlib.pyplot as plt
-from shapely.geometry import Point
-import os
-import sys
 
 
 def create_interactive_map(ca_gdf):
