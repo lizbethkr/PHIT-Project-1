@@ -6,7 +6,6 @@ import pandas as pd
 import geopandas as gpd
 import matplotlib.pyplot as plt
 from shapely.geometry import Point
-import folium 
 import os
 import sys
 
