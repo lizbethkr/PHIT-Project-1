@@ -7,8 +7,8 @@ from scipy.stats import kendalltau
 MIN_TEMP = -10
 MAX_TEMP = 55
 
-# Directory containing the yearly data files
-data_folder = 'C:/Users/nenao/PHIT-Project-1-New/PHIT-Project-1/data/processed/ghcn_filled/'
+# Directory containing the cleaned data files
+data_folder = 'C:/Users/nenao/PHIT-Project-1-New/PHIT-Project-1/data/processed/ghcn_clean/'
 
 # Initialize lists to store year and mean temperatures
 years = []
@@ -17,21 +17,21 @@ mean_temperatures = []
 # Iterate over each CSV file in the data folder
 for file_name in os.listdir(data_folder):
     if file_name.endswith('.csv'):
-        year = int(file_name.split('_')[-1].split('.')[0])  # Extract year from filename
+        year = int(file_name.split('_')[1])  # Extract year from filename
         if year == 2023:  # Skip the year 2023
             continue
 
         # Load the data for the current year
         df = pd.read_csv(os.path.join(data_folder, file_name))
 
-        # Assuming the temperature column exists and filtering out NaN values
-        df = df.dropna(subset=['temperature'])
+        # Assuming the 'Temperature' column exists and filtering out NaN values
+        df = df.dropna(subset=['Temperature'])
 
         # Filter out temperature values that are outside the reasonable range
-        df = df[(df['temperature'] >= MIN_TEMP) & (df['temperature'] <= MAX_TEMP)]
+        df = df[(df['Temperature'] >= MIN_TEMP) & (df['Temperature'] <= MAX_TEMP)]
 
         # Calculate the mean temperature for the current year
-        mean_temp = df['temperature'].mean()
+        mean_temp = df['Temperature'].mean()
 
         # Append the year and mean temperature to the lists
         years.append(year)
