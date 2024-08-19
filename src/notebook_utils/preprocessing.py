@@ -28,7 +28,7 @@ def read_ca_stations():
 
 def combine_files_to_dfs(folder):
     ''' combines individual csv files into their own dataframes based on year.
-    It then appends each dataframe to a list called dfs.'''
+    It then concatenates all dataframes into one and returns it.''' 
 
     dfs = []
     for filename in os.listdir(folder):
@@ -42,7 +42,10 @@ def combine_files_to_dfs(folder):
             
             except Exception as e:
                 print(f"Error processing file {filename}: {str(e)}")
-    return dfs
+
+    CA_stations = pd.concat(dfs, ignore_index=True) # type: ignore
+
+    return CA_stations
 
 
 def create_full_df():
@@ -230,11 +233,36 @@ def fill_nan_sandwiched(input_file, output_file, txt_output_file):
 def get_reduced_df():
     # create a combined dataframe for all reduced csv files
     dfs = combine_files_to_dfs("../data/processed/ghcn_reduced")
-    CA_stations = pd.concat(dfs, ignore_index=True) # type: ignore
-    return CA_stations
+    return dfs
 
-def get_full_df():
-    # create a combined dataframe for all reduced csv files
-    dfs = combine_files_to_dfs("../data/processed/ghcn_full")
-    CA_stations = pd.concat(dfs, ignore_index=True) # type: ignore
-    return CA_stations
+def get_full_df(csv_folder, chunksize=500000):
+    # initialize empty list to store chunks
+    dfs = []
+
+    # read csv file in chunks
+    for filename in os.listdir(csv_folder):
+        if filename.endswith(".csv"):
+            full_path = os.path.join(csv_folder, filename)
+            
+            # Read the CSV file in chunks
+            df_chunk = pd.read_csv(full_path, chunksize=chunksize)
+            
+            for chunk in df_chunk:
+                # Optionally process each chunk if needed
+                dfs.append(chunk)
+
+    # Combine all chunks using the original combine_files_to_dfs function
+    combined_df = combine_files_to_dfs(csv_folder)
+
+    return combined_df
+
+def optimize_col_types(df):
+    
+    for col in ['Year', 'Month', 'Day', 'Hour']:
+        df[col] = pd.to_numeric(df[col], downcast='integer')
+
+    for col in ['Latitude', 'Longitude', 'temperature']:
+        df[col] = pd.to_numeric(df[col], downcast='float')
+    
+    return df
+
