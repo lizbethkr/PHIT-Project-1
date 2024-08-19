@@ -1,6 +1,6 @@
 import os
 
-# Run this code to check the size of the files within ghcn_reduced
+# Run this code to check the size of the files within a specific directory
 
 directory = 'data/processed/ghcn_clean'
 
