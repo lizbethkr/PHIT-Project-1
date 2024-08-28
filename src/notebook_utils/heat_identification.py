@@ -25,7 +25,7 @@ def identify_heat_groups(daily_temp):
     daily_temp.drop(columns=['heat_event_change'], inplace=True)
 
     # filter out groups with less than 3 days of heat events
-    valid_groups = daily_temp.groupby('heat_event_group').filter(lambda x: x['heat_event'].sum() >= 3)
+    valid_groups = daily_temp.groupby('heat_event_group').filter(lambda x: x['heat_event'].sum() >= 2)
     valid_groups.reset_index(drop=True, inplace=True)
     filtered_df = valid_groups[valid_groups['heat_event']].copy()
 
