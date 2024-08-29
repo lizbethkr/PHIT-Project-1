@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import plotly.express as px
 import statsmodels.api as sm
 import seaborn as sns
 from scipy import stats
@@ -43,7 +44,7 @@ def calc_heat_event_metrics(heat_groups_df):
     heat_groups_df['Year'] = heat_groups_df['Date'].dt.year
 
     # Calculate the duration and intensity of each heat event group per station per year
-    heat_event_metrics = heat_groups_df.groupby(['Station_name', 'heat_event_group', 'Year']).agg(
+    heat_event_metrics = heat_groups_df.groupby(['Station_name', 'Latitude', 'Longitude', 'heat_event_group', 'Year']).agg(
         Start_date = ('Date', 'first'),
         End_date = ('Date', 'last'),
         Duration = ('Date', 'count'),
@@ -59,5 +60,50 @@ def calc_heat_event_metrics(heat_groups_df):
     heat_event_metrics = heat_event_metrics.merge(station_year_frequency, on=['Station_name', 'Year'])
 
     # Reorder and rename columns
-    heat_event_metrics = heat_event_metrics[['Station_name', 'Year', 'heat_event_group', 'Start_date', 'End_date', 'Duration', 'Intensity', 'Frequency']]
+    heat_event_metrics = heat_event_metrics[['Station_name', 'Latitude','Longitude', 'Year', 'heat_event_group', 'Start_date', 'End_date', 'Duration', 'Intensity', 'Frequency']]
     return heat_event_metrics
+
+
+def create_heat_event_map(ca_gdf):
+    ca_gdf['Year'] = ca_gdf['Year'].astype(str)
+
+    min_intensity = ca_gdf['Intensity'].min()
+    ca_gdf['Intensity_size'] = (ca_gdf['Intensity'] - min_intensity + 1).round(1)
+
+    min_frequency = ca_gdf['Frequency'].min()
+    max_frequency = ca_gdf['Frequency'].max()
+
+    fig = px.scatter_mapbox(
+        ca_gdf, 
+        lat="Latitude", 
+        lon="Longitude", 
+        color="Frequency",
+        size="Intensity_size",
+        hover_name="Station_name", 
+        animation_frame="Year", 
+        color_continuous_scale=px.colors.sequential.YlOrRd, 
+        range_color=[min_frequency, max_frequency], 
+        size_max=15, 
+        zoom=5, 
+        mapbox_style="open-street-map",
+        title="Heat Event Occurrence and Intensity in California (2003-2023)"
+    )
+
+    fig.update_layout(
+        mapbox=dict(
+            center={'lat': 37, 'lon': -120},
+            zoom=5
+        ),
+        mapbox_bounds={"west": -130, "east": -110, "south": 30, "north": 43},
+        margin={"r": 40, "t": 40, "l": 40, "b": 40},
+        width=700,
+        height=800,
+        coloraxis_colorbar=dict(
+            title="Heat Event Frequency",
+            titlefont_size=13,
+        ),
+        updatemenus=[dict(type="buttons", showactive=False, y=-0.09, x=0.0, xanchor="left", yanchor="bottom")],
+        sliders=[dict(active=0, y=0.08, x=0.2, xanchor="left", yanchor="top")],
+    )
+
+    fig.show()
