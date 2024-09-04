@@ -8,6 +8,7 @@ __pycache__/
 
 # Ignored folders
 /data/raw/ghcn_csv/
+/data/raw/ghcn_raw/
 /notebooks/*.csv
 /notebooks/*.txt
 /data/processed/ghcn_full/

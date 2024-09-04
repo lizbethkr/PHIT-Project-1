@@ -10,7 +10,7 @@ base_url = "https://www.ncei.noaa.gov/oa/global-historical-climatology-network/h
 base_folder = "data/raw"
 raw_folder = os.path.join(base_folder, "ghcn_raw")
 processed_folder = os.path.join(base_folder, "ghcn_csv")
-external_folder = os.path.join('data/external', "external")
+external_folder = os.path.join('data', "external")
 
 if not os.path.exists(processed_folder):
     os.makedirs(processed_folder)
@@ -98,7 +98,7 @@ empty_entries_all = 0
 
 station_missing_temp = {}
 
-for year in range(2023, 2024):
+for year in range(2010, 2024):
     combined_data = []
     for station in ca_stations:
         # create file path
@@ -125,8 +125,8 @@ for year in range(2023, 2024):
         station_missing_temp[station]['total'] += data.shape[0]
         station_missing_temp[station]['missing'] += data[pd.isna(data['temperature'])].shape[0]
 
-        # comment below to keep raw files
-        os.remove(file_path)
+        # uncomment below to delete raw files immediately
+        # os.remove(file_path)
 
     # all stations for the year loaded -> combine into df and csv file
     if combined_data:
@@ -151,23 +151,5 @@ for year in range(2023, 2024):
         combined_df.to_csv(os.path.join(processed_folder, f"CA_stations_{year}.csv"), index=False)
         print(f"Processed all CA stations for year {year}")
 
-# calculate overall percentage of empty temperature values
-overall_percentage_empty = (empty_entries_all / total_entries_all) * 100
-
-# grab stations with more than 50% missing temp values
-stations_with_high_missing = [
-    station for station, counts in station_missing_temp.items()
-    if counts['total'] > 0 and (counts['missing'] / counts['total']) > 0.5
-]
-
-# Write the percentage of missing data to a text file
-with open(os.path.join(external_folder, "percentage_missing_data.txt"), 'w') as f:
-    for item in percentage_missing_data:
-        f.write(f"Year: {item['year']}, Percentage of missing temperature values: {item['percentage_empty']:.2f}%\n")
-    
-    f.write(f"\nOverall percentage of missing temperature values: {overall_percentage_empty:.2f}%\n")
-    f.write("\nStations with more than 50% missing temperature values:\n")
-    for station in stations_with_high_missing:
-        f.write(f"{station}\n")
 
 print("Complete.")
