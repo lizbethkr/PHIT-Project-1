@@ -12,6 +12,7 @@ __pycache__/
 /notebooks/*.csv
 /notebooks/*.txt
 /data/processed/ghcn_full/
+/data/processed/ghcn_meteo/
 
 # Distribution / packaging
 .Python
