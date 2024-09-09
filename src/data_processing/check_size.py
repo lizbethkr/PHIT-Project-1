@@ -2,7 +2,7 @@ import os
 
 # Run this code to check the size of the files within a specific directory
 
-directory = 'data/processed/ghcn_full'
+directory = 'data/processed/ghcn_meteo_cleaned'
 
 csv_files = [f for f in os.listdir(directory) if f.endswith('.csv')]
 
