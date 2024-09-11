@@ -43,8 +43,8 @@ The data directory contains 3 sub folders: external, processed, and raw.
       - Contains cleaned hourly temperature data for CA stations. 
    b. ghcn_cleaned/
       - Contains files identical to the files in ghcn_clean, except it has 2 extra columns: County and City.
-   c. ghcn_filled/
-      - Contains files with filled in temperature values, so there are no missing temperature values. This file is the version before ghcn_clean.
+   c. ghcn_meteo_cleaned/
+      - Contains files from ghcn_cleaned, but with relative_humidity, wind_speed, and precipitation columns merged and cleaned.
    d. ghcn_full/
       - Contains all hourly temperature observations for CA stations.
    e. ghcn_reduced/
