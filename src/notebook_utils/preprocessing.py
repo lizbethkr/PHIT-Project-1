@@ -217,14 +217,12 @@ def fill_nan_sandwiched(input_file, output_file, txt_output_file):
 
     df['filled_temperature'] = filled_temperatures
 
-    # Ensure output directory exists
     os.makedirs(os.path.dirname(output_file), exist_ok=True)
     os.makedirs(os.path.dirname(txt_output_file), exist_ok=True)
     
     # Save the filled dataframe to the output directory
     df.to_csv(output_file, index=False)
     
-    # Log changes
     with open(txt_output_file, 'w') as log_file:
         log_file.write('Station_ID,Index,Original_Temperature,Filled_Temperature\n')
         for log in changes_log:

@@ -107,3 +107,16 @@ def create_heat_event_map(ca_gdf):
     )
 
     fig.show()
+
+def create_csv_files(CA_stations_dfs, name):
+    output_folder = f'../data/processed/{name}'
+    os.makedirs(output_folder, exist_ok=True)
+
+    years = CA_stations_dfs['Year'].unique()
+
+    for year in years:
+        yearly_data = CA_stations_dfs[CA_stations_dfs['Year'] == year]
+        output_file = os.path.join(output_folder, f'{year}_{name}.csv')
+        yearly_data.to_csv(output_file, index=False)
+
+    print(f'New datafrane yearly files saved to {name}')
